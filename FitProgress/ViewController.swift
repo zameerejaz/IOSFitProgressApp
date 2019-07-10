@@ -12,6 +12,7 @@ import CoreData
 class ViewController: UIViewController, UITextFieldDelegate {
   
     var foundInputs : [Weights]?
+    var oldWeekInputs : [Weights]?
     
     @IBOutlet weak var weightEntered: UITextField!
     @IBOutlet weak var displayWeightLabel: UILabel!
@@ -19,6 +20,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBAction func savingWeight(_ sender: UIButton) {
         let currentDate = removeTime(addTimeToRemove: Date())
         let itemExistForDate = Weights.fetchSpecificObjectByWeekDate(week2: currentWeek(), date: currentDate)
+        
        print("the amount of data found \(itemExistForDate)")
         if (itemExistForDate > 0){
             showAlert(date: currentDate)
@@ -40,6 +42,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         weightEntered.keyboardType = .decimalPad
        // Weights.clearData()
        
+       
     }
     
     
@@ -47,13 +50,22 @@ class ViewController: UIViewController, UITextFieldDelegate {
         if let inputs = Weights.fetchObject(week: currentWeek()){
             foundInputs = inputs
             displayAverages()
-            for input in foundInputs! {
-                print("the items found for this week \(input.weightInput ) and date was \(input.dateStamp)")
-            }
+            weightEntered.placeholder = "\(foundInputs!.last!.weightInput)"
         }else{
-            
-            print("No data found")
+            print("No data found for current week")
         }
+        
+        let previosWeek = (currentWeek() - 1)
+        print("the previos week is \(previosWeek) and current week is \(currentWeek())")
+        
+        if let previousInputs = Weights.fetchObject(week: previosWeek){
+            oldWeekInputs = previousInputs
+            displayPreviousWeekAverages()
+        }else{
+            print("could not load previous week averages")
+        }
+        
+       
     }
 
     
@@ -109,6 +121,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
         print("the average is \(averageSum)")
         displayWeightLabel.text = String(format: "%.2f", averageSum)
 
+    }
+    
+    private func displayPreviousWeekAverages(){
+        
+        print("THe count is \(oldWeekInputs?.count)")
+      
+        print("in the previous average function")
     }
     
     

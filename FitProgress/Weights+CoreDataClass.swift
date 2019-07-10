@@ -49,10 +49,16 @@ public class Weights: NSManagedObject {
             let fetchRequest : NSFetchRequest<Weights> = Weights.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "weekNum =%@", NSNumber(value: week))
             weightInputUsers = try context.fetch(fetchRequest)
-            return weightInputUsers
+          
+            if(weightInputUsers?.count == 0){
+                return nil
+            }else{
+                return weightInputUsers
+            }
+            
         }catch {
             print("Error fetching the data \(error)")
-            return weightInputUsers
+            return nil
         }
     }
     
