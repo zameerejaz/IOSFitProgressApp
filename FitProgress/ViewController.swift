@@ -25,6 +25,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }else{
             print("new item")
             Weights.saveObject(weightInput: Double (weightEntered.text!)!, dateStamp: currentDate, weekNum: currentWeek())
+            displayAverages()
             
         }
       
@@ -45,10 +46,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         if let inputs = Weights.fetchObject(week: currentWeek()){
             foundInputs = inputs
+            displayAverages()
             for input in foundInputs! {
                 print("the items found for this week \(input.weightInput ) and date was \(input.dateStamp)")
             }
         }else{
+            
             print("No data found")
         }
     }
@@ -90,6 +93,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (alert1) in
             print("overriting the data \(alert1.title)")
             Weights.updateUsers(dateStamp: date, weight: Double (self.weightEntered.text!)!, weekNum: self.currentWeek())
+            self.displayAverages()
         }))
         
         alert.addAction(UIAlertAction(title: "No", style: .default, handler: { (_) in
@@ -98,6 +102,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }))
         
         self.present(alert, animated: true)
+    }
+    
+    private func displayAverages(){
+        let averageSum : Double = foundInputs!.reduce(0) {$0 + $1.weightInput} / Double (foundInputs!.count)
+        print("the average is \(averageSum)")
+        displayWeightLabel.text = String(format: "%.2f", averageSum)
+
     }
     
     
